@@ -1,20 +1,41 @@
-#ifndef _ON_KEYBOARD_C_
-#define _ON_KEYBOARD_C_
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <GL/glut.h>
+#include "move.h"
 
-#include "header.h"
+#define TIMER_ID 0
+#define TIMER_INTERVAL 10
 
-static void onKeyboard(unsigned char key, int x, int y){
+move now;
+float x_position = 0, y_position = 0;
+float x_sceen, y_sceen;
+
+void on_timer (int value){
+    if(value != TIMER_ID)
+        return;
+    x_position +=now.x*0.01;
+    y_position +=now.y*0.01;
+    
+    y_sceen +=now.y*0.1;
+    x_sceen +=now.x*0.1;
+    
+    
+    glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
+}
+
+void onKeyboard(unsigned char key,int x,int y){
 	
     switch (key) {
         case 27:
             exit(0);
             break;
 
-        case 'w':
+        case 's':
             now.y+=1;
             break;
 
-        case 's':
+        case 'w':
             now.y-=1;
             break;
 
@@ -35,14 +56,14 @@ static void onKeyboard(unsigned char key, int x, int y){
 }
 
 
-static void onKeyboardUp(unsigned char key, int x,int y){
+void onKeyboardUp(unsigned char key,int x,int y){
 
     switch (key) {
         case 27:
             exit(0);
             break;
 
-        case 's':
+        case 'w':
             now.y+=1;
             break;
 
@@ -54,7 +75,7 @@ static void onKeyboardUp(unsigned char key, int x,int y){
             now.x-=1;
             break;
         
-        case 'w':
+        case 's':
             now.y-=1;
             break;
 
@@ -62,5 +83,3 @@ static void onKeyboardUp(unsigned char key, int x,int y){
 
     glutPostRedisplay();
 }
-
-#endif

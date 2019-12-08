@@ -1,12 +1,19 @@
 PROGRAM = hole
 CC      = gcc
-CFLAGS  = -g -ansi -Wall -I/usr/X11R6/include -I/usr/pkg/include
-LDFLAGS = -L/usr/X11R6/lib -L/usr/pkg/lib ./onKeyboard.h ./ontimer.h ./header.h
+CFLAGS  = -g -std=c99 -ansi -Wall -Wextra -I/usr/X11R6/include -I/usr/pkg/include
+LDFLAGS = -L/usr/X11R6/lib -L/usr/pkg/lib ./move.h
 LDLIBS  = -lglut -lGLU -lGL -lm
 
-$(PROGRAM): main.o
-	$(CC) $(LDFLAGS) -o $(PROGRAM) main.o $(LDLIBS)
+$(PROGRAM): main.o move.o
+	$(CC) $(LDFLAGS) -o $(PROGRAM) main.o move.o $(LDLIBS)
+	
+main.o: main.c
+	$(CC) $(CFLAGS) $(LDLIBS) -c main.c -o main.o $(LDLIBS)
 
+move.o: move.c
+	$(CC) $(CFLAGS) $(LDLIBS) -c move.c -o move.o $(LDLIBS)
+
+	
 .PHONY: beauty clean dist
 
 beauty:

@@ -15,12 +15,13 @@ typedef struct MOVE{
 }move;
 
 move now;
-float x_position=0, y_position=0;
+extern float x_position, y_position;
+extern float x_sceen, y_sceen;
 
-static void on_timer(int value);
+extern void on_timer(int value);
 
-static void onKeyboardMove(unsigned char key, int x, int y);
-static void onKeyboardMoveUp(unsigned char key,int x,int y);
+extern void onKeyboard(unsigned char key, int x, int y);
+extern void onKeyboardUp(unsigned char key,int x,int y);
 
 
 #endif
