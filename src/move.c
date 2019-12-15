@@ -17,9 +17,7 @@ void on_timer (int value){
     x_position +=now.x*0.01;
     y_position +=now.y*0.01;
     
-    y_sceen +=now.y*0.1;
-    x_sceen +=now.x*0.1;
-    
+   
     
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
 }

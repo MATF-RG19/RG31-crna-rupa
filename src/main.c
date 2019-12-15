@@ -2,21 +2,30 @@
 #include <stdio.h>
 #include <GL/glut.h>
 #include <math.h>
-/*#include "header.c"
-#include "onKeyboard.c"
-#include "onTimer.c"
-*/
+
 #include "move.h"
+#include "drawSceen.h"
 
 #define PI 3.1415926535
 #define num_of_dots 600
 
+GLubyte hole_texture[3 * 4 * 4] = {
+    0, 0, 0,   0, 0, 0,   0, 0, 0,   0, 0, 0,
+    0, 0, 0,   0, 0, 0,   0, 0, 0,   0, 0, 0,
+    1, 1, 1,   1, 1, 1,   1, 1, 1,   1, 1, 1,
+    1, 1, 1,   1, 1, 1,   1, 1, 1,   1, 1, 1
+};
+
+
 static int window_width, window_height;
 
+static void initialize(void);
 static void on_reshape(int width, int height);
 static void on_display(void);
 void DrawCircle(void);
 void DrawObjects(void);
+
+static GLuint id_tex[1];
 
 
 int main(int argc, char **argv)
@@ -40,8 +49,8 @@ int main(int argc, char **argv)
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
     glutReshapeFunc(on_reshape);
     glutDisplayFunc(on_display);
-
-    glClearColor(0.75, 0.75, 0.75, 0);
+    
+    glClearColor(0, 0, 0, 0);
     glEnable(GL_DEPTH_TEST);
     glLineWidth(2);
 
@@ -59,7 +68,7 @@ static void on_reshape(int width, int height)
 
 static void on_display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
     glViewport(0, 0, window_width, window_height);
 
@@ -73,14 +82,13 @@ static void on_display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(
-            1+(cos(PI/12)*0.1), 2, 3+(cos(PI/12)*0.1),
-            x_sceen, 0, y_sceen,
+            1+x_position, 2, 3+y_position,
+            x_position, 0, y_position,
             0, 1, 0
         );
 
-    glColor3f(0.5,0.3,0.7);
+    makeSceen();
     
-    /*glTranslatef(x_sceen, 0, y_sceen);*/
     DrawObjects();
     glTranslatef(x_position, 0, y_position);
     
@@ -90,13 +98,34 @@ static void on_display(void)
     glutSwapBuffers();
 }
 
+static void initialize(void)
+{
+    glEnable(GL_COLOR_MATERIAL);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+    glGenTextures(1, id_tex);
+
+    /* Kreira se prva tekstura. */
+    glBindTexture(GL_TEXTURE_2D, id_tex[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 1,
+                 GL_RGB, GL_UNSIGNED_BYTE, hole_texture);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+#define SEGMENTS 16
 void DrawCircle(void)
 {
-    /*glClear(GL_COLOR_BUFFER_BIT);*/
-    
     int i;
-    glColor3f(0,0,0);
+    glColor3f(0.5,0.5,0.5);
+    glBindTexture(GL_TEXTURE_2D, id_tex[0]);
+    glEnable(GL_TEXTURE_2D);
+
     
     glBegin(GL_POINTS);
     for(i = 0; i < num_of_dots; i++)
@@ -112,6 +141,8 @@ void DrawCircle(void)
     
     glBegin(GL_TRIANGLE_FAN);
     for (i = 0; i < num_of_dots; i++) {
+        glNormal3f(0, 1, 0);
+        glTexCoord2f(i / (float) SEGMENTS, 0);
         glVertex3f(
                 cos(2 * i * PI / num_of_dots) * 0.4,
                    0,
@@ -120,33 +151,9 @@ void DrawCircle(void)
     }
 
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+    
+#undef SEGMENTS
 }
 
-
-void DrawSquare(float trans1, float trans2, float trans3, float scal){
-    glPushMatrix();
-        glColor3f(1,0,0);
-        glTranslatef(trans1,0.1,trans3);
-        glScalef(scal, scal, scal);
-        glutSolidCube(0.5);
-    glPopMatrix(); 
-    glPushMatrix();     
-        glColor3f(0,1,0);
-        glTranslatef(-trans1,0.1,trans3);
-        glScalef(scal, scal, scal);
-        glutSolidCube(0.5);
-    glPopMatrix();
-}
-
-void DrawObjects(void){
-    int i;
-    float trans1 =0.1, trans2 = 0.1;
-    float scale = 0.3;
-    for(i=0; i<4; i++){
-        DrawSquare(trans1, trans1, trans2,  scale);
-        trans1 +=0.1;
-        trans2 +=0.2;
-        
-    }
-}
 
