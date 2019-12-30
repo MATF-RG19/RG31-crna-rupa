@@ -17,6 +17,7 @@ typedef struct MOVE{
 move now;
 float x_position=0, y_position=0;
 float x_sceen=0, y_sceen = 0;
+int gameStarted=0;
 
 /*static void on_timer(int value);
 

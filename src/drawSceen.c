@@ -4,11 +4,25 @@
 #include <GL/glut.h>
 
 #include "drawSceen.h"
+#include "move.h"
+#include "shared.h"
+
+extern float hour;
+extern float timer_active;
 
 void DrawPlanets(int mov);
+ void on_timer1( int value){  
+        if(value != 0)
+            return;
+        hour+=6;
 
+        glutPostRedisplay();
 
-void DrawSquare(float trans1, float trans2, float trans3, float scal){
+        if(timer_active)
+            glutTimerFunc(50, on_timer1, 0);
+}
+
+/*void DrawSquare(float trans1, float trans2, float trans3, float scal){
     glPushMatrix();
         glColor3f(1,0,0);
         glTranslatef(trans1,0.1,trans3);
@@ -21,12 +35,12 @@ void DrawSquare(float trans1, float trans2, float trans3, float scal){
         glScalef(scal, scal, scal);
         glutSolidCube(0.5);
     glPopMatrix();
-}
+}*/
 
 void DrawObjects(void){
     int mov = 0;
     int i;
-    for(i=1; i<3; i++){
+    for(i=1; i<2; i++){
         DrawPlanets(mov);
         mov+=0.8;
     }
@@ -34,38 +48,62 @@ void DrawObjects(void){
 
 void DrawPlanets(int mov){
     glPushMatrix();
-        glTranslatef(-0.1+mov,0.5,0.1+mov);
+    float sun_rotation;
+    float earth_rotation, earth_revolution;
+    float moon_rotation, moon_revolution;
+
+    sun_rotation = 360 * hour / (15 * 24);
+    glTranslatef(-0.1,0.5,0.1);
+    glPushMatrix();
+        glRotatef(sun_rotation, 0, 1, 0);
         glColor3f(1, 1, 0);
         glutSolidSphere(0.35, 40, 40);
     glPopMatrix();
     
-    
+    earth_revolution = 360 * hour / (365 * 24);
+    earth_rotation = 360 * hour / (1 * 24);
+
+    glRotatef(earth_revolution, 0, 1, 0);
+    glTranslatef(2,0.5,0.1);
     glPushMatrix();
-        glTranslatef(2+mov,0.5+mov ,0.1+mov);
+        glRotatef(earth_rotation, 0, 1, 0);
         glColor3f(0, 0, 1);
         glutSolidSphere(0.3, 40, 40);
     glPopMatrix();
     
+    moon_revolution = 360 * hour / (28 * 24);
+    moon_rotation = 360 * hour / (28 * 24);
+
+    glRotatef(moon_revolution, 0, 1, 0);
+    glTranslatef(0.5,0 ,0.1);
+
+    glRotatef(moon_rotation, 0, 1, 0);
+    glColor3f(1, 1, 1);
+    glutSolidSphere(0.1, 40, 40);
+
+    glPopMatrix();
+    
     glPushMatrix();
-        glTranslatef(2.5+mov,0.5+mov ,0.1+mov);
-        glColor3f(1, 1, 1);
-        glutSolidSphere(0.1, 40, 40);
+        glTranslatef(2, 0.5, 2);
+        glColor3f(1, 0, 0);
+        glutSolidSphere(0.5, 40, 40);
+        glTranslatef(1, -0.1, -3);
+        glColor3f(0, 1, 0);
+        glutSolidSphere(0.4, 40, 40);
     glPopMatrix();
 
+    /*glutSwapBuffers();*/
 }
 
 void makeSceen(void){
     GLfloat light_position[] = { 1, 2, 3, 0 };
     
     GLfloat light_ambient[] = { 0.5, 0.5, 0.5, 1 };
-    GLfloat light_diffuse[] = { 0, 0, 0, 1 };
-    GLfloat light_specular[] = { 0, 0, 0, 1 };
+    GLfloat light_diffuse[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
     
-    GLfloat ambient_coeffs[] = { 1.0, 0.1, 0.1, 1 };
-    GLfloat diffuse_coeffs[] = { 0.0, 0.0, 0.8, 1 };
-    GLfloat specular_coeffs[] = { 1, 1, 1, 1 };
-    GLfloat shininess = 20;
-    
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_COLOR_MATERIAL);
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -78,8 +116,4 @@ void makeSceen(void){
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
-    /* Podesavaju se parametri materijala. */
-    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
 }
