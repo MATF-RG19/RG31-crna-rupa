@@ -4,22 +4,17 @@
 #include <math.h>
 #include <string.h>
 
+#include "image.h"
 #include "move.h"
 #include "drawSceen.h"
 #include "shared.h"
 
 #define PI 3.1415926535
 #define num_of_dots 600
+#define FILENAME0 "hole113.bmp"
 
 float hour;
 float timer_active;
-
-GLubyte hole_texture[3 * 4 * 4] = {
-    0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,
-    0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,
-    0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,   0xff, 0xff, 0xdf,
-    0xc8, 0x88, 0x88,   0xc8, 0x88, 0x88,   0xc8, 0x88, 0x88,   0xc8, 0x88, 0x88
-};
 
 
 static int window_width, window_height;
@@ -31,9 +26,9 @@ void DrawCircle(void);
 extern void DrawObjects(void);
 static void renderStrokeString(int x, int y, int z, void* font, char* string);
 
-static GLuint id_tex[1];
 char statingText[50];
-char name[50];
+static GLuint name[1];
+
 
 int main(int argc, char **argv)
 {
@@ -49,7 +44,7 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 
-    glutInitWindowSize(600, 600);
+    glutInitWindowSize(1200, 800);
     glutInitWindowPosition(100, 100);
     glutCreateWindow(argv[0]);
 
@@ -62,6 +57,9 @@ int main(int argc, char **argv)
     glClearColor(0, 0, 0, 0);
     glEnable(GL_DEPTH_TEST);
     glLineWidth(2);
+    initialize();
+
+    
 
     glutMainLoop();
 
@@ -77,7 +75,7 @@ static void on_reshape(int width, int height)
 
 static void on_display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glViewport(0, 0, window_width, window_height);
 
@@ -90,18 +88,27 @@ static void on_display(void)
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(
-            1+x_position, 2, 3+y_position,
-            x_position, 0, y_position,
+    if(!gameStarted){
+        gluLookAt(
+            1, 2, 3,
+            1, 1, 1,
             0, 1, 0
-    );
+        );
+    }
+    else{
+        gluLookAt(
+                1+x_position, 2, 3+y_position,
+                x_position, 0, y_position,
+                0, 1, 0
+        );
+    }
     
     if(!gameStarted){
         glPushMatrix();
-            int x = -24;
-            int y = 11;
-            int z = -1;
-            glScalef(0.05, 0.05, 5);
+            int x = -37;
+            int y = 12;
+            int z = 0;
+            glScalef(0.04, 0.04, 4);
                 glPushAttrib(GL_LINE_BIT);
                     glLineWidth(4);
                     sprintf(statingText, "To start the game press a or s or d or w");
@@ -113,58 +120,65 @@ static void on_display(void)
 
     if(gameStarted){
         makeSceen();
-        /*initialize();*/
-
+    
         DrawObjects();
         glTranslatef(x_position, 0, y_position);
-    
+
         DrawCircle();
     
-    }
+    }   
+    
+
     glutPostRedisplay();
     glutSwapBuffers();
 }
 
 static void initialize(void)
 {
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    /* Objekat koji predstavlja teskturu ucitanu iz fajla. */
+    Image * image;
 
-    glGenTextures(1, id_tex);
+    glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_TEXTURE_2D);
+
+    glTexEnvf(GL_TEXTURE_ENV,
+              GL_TEXTURE_ENV_MODE,
+              GL_REPLACE);
+
+    /*
+     * Inicijalizuje se objekat koji ce sadrzati teksture ucitane iz
+     * fajla.
+     */
+    image = image_init(0, 0);
 
     /* Kreira se prva tekstura. */
-    glBindTexture(GL_TEXTURE_2D, id_tex[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    image_read(image, FILENAME0);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0,
-                 GL_RGB, GL_UNSIGNED_BYTE, hole_texture);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    /* Generisu se identifikatori tekstura. */
+    glGenTextures(1, name);
+
+    glBindTexture(GL_TEXTURE_2D, name[0]);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 image->width, image->height, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
+
 }
 
 void DrawCircle(void)
 {
     int i;
     glColor3f(0.5,0.5,0.5);
-    /*glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-    glGenTextures(1, id_tex);
-    glBindTexture(GL_TEXTURE_2D, id_tex[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0,
-                 GL_RGB, GL_UNSIGNED_BYTE, hole_texture);
-    
-
-    glEnable(GL_TEXTURE_2D);
-    /*glEnable(GL_DEPTH_TEST);*/
-    /*glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    */
+    glPushMatrix();
+    glTranslatef(0, 0.2, 0);
     glColor4f(0.7, 0.7, 0.7, 0);
     glBegin(GL_POINTS);
     for(i = 0; i < num_of_dots; i++)
@@ -177,31 +191,7 @@ void DrawCircle(void)
     }
     glEnd();
 
-    /*glColor4f(1, 0, 0, 1);
-    glBegin(GL_POINTS);
-    for(i = 0; i < num_of_dots; i++)
-    {
-        glVertex3f(
-            cos(2* i * PI / num_of_dots)*0.3,
-            0,
-            sin(2* i * PI / num_of_dots)*0.3
-        );
-    }
-    glEnd();*/
-
-    /*
-    glColor4f(1, 0, 0, 1);
-    glBegin(GL_TRIANGLE_STRIP);
-    for (i = 0; i < num_of_dots; i++) {
-        glNormal3f(0, 1, 0);
-        glVertex3f(
-                cos(2 * i * PI / num_of_dots) * 0.3,
-                   0,
-                sin(2 * i * PI / num_of_dots) * 0.3
-                  );
-    }
-    glEnd();
-    */
+    
     glColor4f(0.7, 0.7, 0.7, 0);
     glBegin(GL_TRIANGLE_STRIP);
     for (i = 0; i < num_of_dots; i++) {
@@ -213,8 +203,22 @@ void DrawCircle(void)
                   );
     }
     glEnd();
-    
-    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+    glTranslatef(-0.8,0.1,-0.9);
+    glBindTexture(GL_TEXTURE_2D, name[0]);
+    glBegin(GL_QUADS);
+        glColor3f(1,1,1);
+        glTexCoord2f(0,0);
+        glVertex3f(0,0,0);
+        glTexCoord2f(0,1);
+        glVertex3f(0,0,1.5);
+        glTexCoord2f(1,1);
+        glVertex3f(1.5,0,1.5);
+        glTexCoord2f(1,0);
+        glVertex3f(1.5,0,0);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
     
 }
 

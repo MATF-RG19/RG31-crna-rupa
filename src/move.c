@@ -52,6 +52,10 @@ void onKeyboard(unsigned char key,int x,int y){
             break;
 
         case 'w':
+            if(!gameActive){
+                gameActive = 1;
+                gameStarted =1;
+            }
             if(!timer_active){
                 timer_active = 1;
                 glutTimerFunc(50, on_timer1, 0);
@@ -60,6 +64,10 @@ void onKeyboard(unsigned char key,int x,int y){
             break;
 
         case 'a':
+            if(!gameActive){
+                gameActive = 1;
+                gameStarted =1;
+            }
             if(!timer_active){
                 timer_active = 1;
                 glutTimerFunc(50, on_timer1, 0);
@@ -70,6 +78,10 @@ void onKeyboard(unsigned char key,int x,int y){
             break;
 
         case 'd':
+            if(!gameActive){
+                gameActive = 1;
+                gameStarted =1;
+            }
             if(!timer_active){
                 timer_active = 1;
                 glutTimerFunc(50, on_timer1, 0);

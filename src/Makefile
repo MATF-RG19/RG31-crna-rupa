@@ -4,8 +4,8 @@ CFLAGS  = -g -std=c99 -ansi -Wall -Wextra -I/usr/X11R6/include -I/usr/pkg/includ
 LDFLAGS = -L/usr/X11R6/lib -L/usr/pkg/lib ./move.h ./drawSceen.h
 LDLIBS  = -lglut -lGLU -lGL -lm
 
-$(PROGRAM): main.o move.o drawSceen.o
-	$(CC) $(LDFLAGS) -o $(PROGRAM) main.o move.o drawSceen.o $(LDLIBS)
+$(PROGRAM): main.o move.o drawSceen.o image.o
+	$(CC) $(LDFLAGS) -o $(PROGRAM) main.o move.o drawSceen.o image.o $(LDLIBS)
 	
 main.o: main.c
 	$(CC) $(CFLAGS) $(LDLIBS) -c main.c -o main.o $(LDLIBS)
@@ -15,6 +15,9 @@ move.o: move.c
 
 drawSceen.o: drawSceen.c
 	$(CC) $(CFLAGS) $(LDLIBS) -c drawSceen.c -o drawSceen.o $(LDLIBS)
+
+image.o: image.c
+	$(CC) $(CFLAGS) $(LDLIBS) -c image.c -o image.o $(LDLIBS)
 
 	
 .PHONY: beauty clean dist
