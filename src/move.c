@@ -23,8 +23,8 @@ void on_timer (int value){
     if(value != TIMER_ID)
         return;
     
-    x_position +=now.x*0.03;
-    y_position +=now.y*0.03;
+    x_position +=now.x*0.05;
+    y_position +=now.y*0.05;
         
     
         

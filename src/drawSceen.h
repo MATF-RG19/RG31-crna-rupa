@@ -1,6 +1,6 @@
 #ifndef _DRAW_SCEEN__
 #define _DRAW_SCEEN__
-#define TIMER_INTERVAL_1 50
+#define TIMER_INTERVAL_1 150
 
 
 #include <stdio.h>
@@ -15,5 +15,6 @@ extern float timer_active;
 
 void DrawPlanets(int mov); 
 void on_timer1( int value);
+void DrawPlanet(double radius, double x_cord, double y_cord);
 
 #endif

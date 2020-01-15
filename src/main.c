@@ -13,6 +13,7 @@
 #define num_of_dots 600
 #define FILENAME0 "hole113.bmp"
 
+static int init =0;
 float hour;
 float timer_active;
 
@@ -57,7 +58,7 @@ int main(int argc, char **argv)
     glClearColor(0, 0, 0, 0);
     glEnable(GL_DEPTH_TEST);
     glLineWidth(2);
-    initialize();
+    /*initialize();*/
 
     
 
@@ -112,10 +113,10 @@ static void on_display(void)
                 glPushAttrib(GL_LINE_BIT);
                     glLineWidth(4);
                     sprintf(statingText, "To start the game press a or s or d or w");
-                    glColor3f(1, 1, 1);
+                    glColor3f(1, 0, 0);
                     renderStrokeString(x, y, z, GLUT_STROKE_MONO_ROMAN , statingText);
                 glPopAttrib();
-            glPopMatrix();
+        glPopMatrix();
     }
 
     if(gameStarted){
@@ -205,6 +206,10 @@ void DrawCircle(void)
     glEnd();
     glPopMatrix();
 
+    if(!init){
+        initialize();
+        init  = 1;
+    }
     glTranslatef(-0.8,0.1,-0.9);
     glBindTexture(GL_TEXTURE_2D, name[0]);
     glBegin(GL_QUADS);
@@ -233,4 +238,5 @@ static void renderStrokeString(int x, int y,int z,void* font, char* string){
     {
         glutStrokeCharacter(font, string[i]);
     }
+    glEnable(GL_LIGHTING);
 }

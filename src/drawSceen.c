@@ -2,10 +2,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <GL/glut.h>
+#include <time.h>
 
 #include "drawSceen.h"
 #include "move.h"
 #include "shared.h"
+
 
 extern float hour;
 extern float timer_active;
@@ -44,7 +46,86 @@ void DrawObjects(void){
         DrawPlanets(mov);
         mov+=0.8;
     }
+    double precnik = 0.1;
+    
+    double x_cord = 1;
+    double y_cord = 1;
+    int j;
+    for (j=0; j<10; j++){
+        srand(time(NULL));
+        DrawPlanet(precnik, x_cord, y_cord);
+        x_cord += 1;
+        y_cord +=1;
+        if(precnik>=0.5){
+            precnik = 0.1;
+        }
+        else{
+            precnik+=0.1;
+        }
+    }
+
+    x_cord = -1;
+    y_cord = -1;
+    for (j=0; j<10; j++){
+        DrawPlanet(precnik, x_cord, y_cord);
+        x_cord -= 1;
+        y_cord -=1;
+        if(precnik>=0.5){
+            precnik = 0.1;
+        }
+        else{
+            precnik+=0.1;
+        }
+    }
+
+    x_cord = 1;
+    y_cord = -1;
+    for (j=0; j<10; j++){
+        DrawPlanet(precnik, x_cord, y_cord);
+        x_cord += 1;
+        y_cord-=1;
+        if(precnik>=0.5){
+            precnik = 0.1;
+        }
+        else{
+            precnik+=0.1;
+        }
+    }
+
+    x_cord = -1;
+    y_cord = 1;
+    for (j=0; j<10; j++){
+        DrawPlanet(precnik, x_cord, y_cord);
+        x_cord -= 1;
+        y_cord+=1;
+        if(precnik>=0.5){
+            precnik = 0.1;
+        }
+        else{
+            precnik+=0.1;
+        }
+    }
+
 }
+
+void DrawPlanet(double radius, double x_cord, double y_cord){
+    glPushMatrix();
+        int levo = 1;
+        int desno =255;
+        
+        double r = (double)(rand()%(desno-levo+1)+levo)/280;
+        double g = (double)(rand()%(desno-levo+1)+levo)/290;
+        double b = (double)(rand()%(desno-levo+1)+levo)/255;
+
+
+        glColor3f(r,g,b);
+        glTranslatef(x_cord, 0.5, y_cord);
+        glutSolidSphere(radius,40, 40);
+    glPopMatrix();
+    
+
+}
+
 
 void DrawPlanets(int mov){
     glPushMatrix();
