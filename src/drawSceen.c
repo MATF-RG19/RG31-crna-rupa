@@ -41,21 +41,21 @@ void DrawPlanets(int mov);
 
 void DrawObjects(void){
     int mov = 0;
-    int i;
+    /*int i;
     for(i=1; i<2; i++){
         DrawPlanets(mov);
         mov+=0.8;
-    }
+    }*/
     double precnik = 0.1;
     
     double x_cord = 1;
     double y_cord = 1;
     int j;
+    srand(time(NULL));
     for (j=0; j<10; j++){
-        srand(time(NULL));
-        DrawPlanet(precnik, x_cord, y_cord);
+        DrawPlanet(precnik, x_cord + 2*cos(x_cord), y_cord);
         x_cord += 1;
-        y_cord +=1;
+        y_cord += 2;
         if(precnik>=0.5){
             precnik = 0.1;
         }
@@ -67,8 +67,8 @@ void DrawObjects(void){
     x_cord = -1;
     y_cord = -1;
     for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord, y_cord);
-        x_cord -= 1;
+        DrawPlanet(precnik, x_cord, y_cord + 3*sin(y_cord));
+        x_cord -= 2;
         y_cord -=1;
         if(precnik>=0.5){
             precnik = 0.1;
@@ -81,8 +81,8 @@ void DrawObjects(void){
     x_cord = 1;
     y_cord = -1;
     for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord, y_cord);
-        x_cord += 1;
+        DrawPlanet(precnik, x_cord + cos(x_cord), y_cord);
+        x_cord += 2;
         y_cord-=1;
         if(precnik>=0.5){
             precnik = 0.1;
@@ -95,9 +95,9 @@ void DrawObjects(void){
     x_cord = -1;
     y_cord = 1;
     for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord, y_cord);
+        DrawPlanet(precnik, x_cord, y_cord + 2*sin(y_cord));
         x_cord -= 1;
-        y_cord+=1;
+        y_cord+=2;
         if(precnik>=0.5){
             precnik = 0.1;
         }
