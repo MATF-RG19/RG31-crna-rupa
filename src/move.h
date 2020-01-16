@@ -14,9 +14,14 @@ typedef struct MOVE{
     double y;
 }move;
 
+int gameStarted;
+int gameActive;
+
+
 move now;
-extern float x_position, y_position;
+extern double x_position, y_position;
 extern float x_sceen, y_sceen;
+extern float animation_parametar;
 
 extern void on_timer(int value);
 

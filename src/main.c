@@ -26,9 +26,13 @@ static void on_display(void);
 void DrawCircle(void);
 extern void DrawObjects(void);
 static void renderStrokeString(int x, int y, int z, void* font, char* string);
+void displayScoore(void);
 
+/*Promenljiva u koju upisujem tekst sa ulaznog prozora*/
 char statingText[50];
 static GLuint name[1];
+/*Promenljiva za ispis trenutnog rezultata koji je igrac osovojio*/
+static char rezultat[50];
 
 
 int main(int argc, char **argv)
@@ -103,7 +107,7 @@ static void on_display(void)
                 0, 1, 0
         );
     }
-    
+    /*Pre pritiska ijednog tastera iscrtava se prozor sa uputstvima igre*/
     if(!gameStarted){
         glPushMatrix();
             int x = -37;
@@ -134,9 +138,10 @@ static void on_display(void)
     glutSwapBuffers();
 }
 
+
+/*Inicializacija teksture*/
 static void initialize(void)
 {
-    /* Objekat koji predstavlja teskturu ucitanu iz fajla. */
     Image * image;
 
     glEnable(GL_DEPTH_TEST);
@@ -147,16 +152,10 @@ static void initialize(void)
               GL_TEXTURE_ENV_MODE,
               GL_REPLACE);
 
-    /*
-     * Inicijalizuje se objekat koji ce sadrzati teksture ucitane iz
-     * fajla.
-     */
     image = image_init(0, 0);
 
-    /* Kreira se prva tekstura. */
     image_read(image, FILENAME0);
 
-    /* Generisu se identifikatori tekstura. */
     glGenTextures(1, name);
 
     glBindTexture(GL_TEXTURE_2D, name[0]);
@@ -173,44 +172,48 @@ static void initialize(void)
                  GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
 
 }
-
+/*Funkcija koja iscrtava krug*/
 void DrawCircle(void)
 {
     int i;
     glColor3f(0.5,0.5,0.5);
+    glRotatef(animation_parametar, 0, 1, 0);
+
+    /*Iscrtavanje kruga*/    
     glPushMatrix();
-    glTranslatef(0, 0.2, 0);
-    glColor4f(0.7, 0.7, 0.7, 0);
-    glBegin(GL_POINTS);
-    for(i = 0; i < num_of_dots; i++)
-    {
-        glVertex3f(
-            cos(2* i * PI / num_of_dots)*0.4,
-            0,
-            sin(2* i * PI / num_of_dots)*0.4
-        );
-    }
-    glEnd();
+        glTranslatef(0, 0.15,0);
+        glColor4f(0.7, 0.7, 0.7, 0);
+        glBegin(GL_POINTS);
+        for(i = 0; i < num_of_dots; i++)
+        {
+            glVertex3f(
+                cos(2* i * PI / num_of_dots)*0.4,
+                0,
+                sin(2* i * PI / num_of_dots)*0.4
+            );
+        }
+        glEnd();
 
     
-    glColor4f(0.7, 0.7, 0.7, 0);
-    glBegin(GL_TRIANGLE_STRIP);
-    for (i = 0; i < num_of_dots; i++) {
-        glNormal3f(0, 1, 0);
-        glVertex3f(
+        glColor4f(0.7, 0.7, 0.7, 0);
+        glBegin(GL_TRIANGLE_STRIP);
+        for (i = 0; i < num_of_dots; i++) {
+            glNormal3f(0, 1, 0);
+            glVertex3f(
                 cos(2 * i * PI / num_of_dots) * 0.4,
                    0,
                 sin(2 * i * PI / num_of_dots) * 0.4
                   );
-    }
-    glEnd();
+        }
+        glEnd();
     glPopMatrix();
 
+    /*lepljenje teksture*/
     if(!init){
         initialize();
         init  = 1;
     }
-    glTranslatef(-0.8,0.1,-0.9);
+    glTranslatef(-0.75,0.1,-0.73);
     glBindTexture(GL_TEXTURE_2D, name[0]);
     glBegin(GL_QUADS);
         glColor3f(1,1,1);
@@ -227,6 +230,7 @@ void DrawCircle(void)
     
 }
 
+/*Funkcija za ispis ulaznog prozora*/
 static void renderStrokeString(int x, int y,int z,void* font, char* string){
     int len;
     glDisable(GL_LIGHTING);
@@ -239,4 +243,24 @@ static void renderStrokeString(int x, int y,int z,void* font, char* string){
         glutStrokeCharacter(font, string[i]);
     }
     glEnable(GL_LIGHTING);
+}
+
+/*Funkcija za ispis rezulatat tokom igre*/
+
+/*ne radi*/
+void displayScoore(void){
+        glPushMatrix();
+            
+            int x = -55;
+            int y = 25;
+            int z = 0;
+            glTranslatef(0,0, 0);
+            glScalef(0.05,0.05,5);
+                glPushAttrib(GL_LINE_BIT);
+                    glLineWidth(4); 
+                    sprintf(rezultat,"SCOORE: %f", animation_parametar/100);
+                    glColor3f(1,1,1);
+                    renderStrokeString(x,y,z,GLUT_STROKE_MONO_ROMAN,rezultat);
+                glPopAttrib();
+        glPopMatrix();
 }

@@ -8,9 +8,34 @@
 #include "move.h"
 #include "shared.h"
 
-
 extern float hour;
 extern float timer_active;
+/*Indikator koji govori da li su svi polzaji planeta vec izracunati prvi put*/
+extern int indikator = 0;
+static double eps = 0.00005;
+
+int comparison (const void * a, const void * b) {
+    polozaj *a1 = (polozaj *)a;
+    polozaj* b1 =(polozaj*) b; 
+    double a_x =  a1->x;
+    double a_y =  a1->y;
+    double b_x =  b1->x;
+    double b_y =  b1->y;
+
+    if(a_x-b_x <eps && a_y-b_y<eps)
+        return 0;
+    else if(a_x-b_x <eps && a_y<b_y)
+        return -1;
+    else if(a_x-b_x <eps && a_y>b_y)
+        return 1;
+    else if(a_x <b_x)
+        return -1;
+    else 
+        return 1;
+
+}
+
+
 
 void DrawPlanets(int mov);
  void on_timer1( int value){  
@@ -23,21 +48,6 @@ void DrawPlanets(int mov);
         if(timer_active)
             glutTimerFunc(50, on_timer1, 0);
 }
-
-/*void DrawSquare(float trans1, float trans2, float trans3, float scal){
-    glPushMatrix();
-        glColor3f(1,0,0);
-        glTranslatef(trans1,0.1,trans3);
-        glScalef(scal, scal, scal);
-        glutSolidCube(0.5);
-    glPopMatrix(); 
-    glPushMatrix();     
-        glColor3f(0,1,0);
-        glTranslatef(-trans1,0.1,trans3);
-        glScalef(scal, scal, scal);
-        glutSolidCube(0.5);
-    glPopMatrix();
-}*/
 
 void DrawObjects(void){
     int mov = 0;
@@ -52,8 +62,19 @@ void DrawObjects(void){
     double y_cord = 1;
     int j;
     srand(time(NULL));
-    for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord + 2*cos(x_cord), y_cord);
+    /*Crtamo planete u prvom kvadrantu*/
+    for (j=0; j<20; j++){
+        if(!indikator){    
+            DrawPlanet(precnik, x_cord + 2*cos(x_cord), y_cord);
+        }else{
+            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+        }
+        if(gameStarted && indikator == 0){      
+            planetPosition[j].x = x_cord + 2*cos(x_cord);
+            planetPosition[j].y = y_cord;
+            planetPosition[j].eaten = 0;
+        }
+        
         x_cord += 1;
         y_cord += 2;
         if(precnik>=0.5){
@@ -64,38 +85,22 @@ void DrawObjects(void){
         }
     }
 
-    x_cord = -1;
-    y_cord = -1;
-    for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord, y_cord + 3*sin(y_cord));
-        x_cord -= 2;
-        y_cord -=1;
-        if(precnik>=0.5){
-            precnik = 0.1;
-        }
-        else{
-            precnik+=0.1;
-        }
-    }
-
-    x_cord = 1;
-    y_cord = -1;
-    for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord + cos(x_cord), y_cord);
-        x_cord += 2;
-        y_cord-=1;
-        if(precnik>=0.5){
-            precnik = 0.1;
-        }
-        else{
-            precnik+=0.1;
-        }
-    }
-
+    /*Crtamo planete u drugom kvadrantu*/
     x_cord = -1;
     y_cord = 1;
-    for (j=0; j<10; j++){
-        DrawPlanet(precnik, x_cord, y_cord + 2*sin(y_cord));
+    for (j=20; j<40; j++){
+        if(!indikator){
+            DrawPlanet(precnik, x_cord, y_cord + 2*sin(y_cord));
+        }else{
+            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+        }
+        if(gameStarted && indikator==0){      
+            planetPosition[j].x = x_cord;
+            planetPosition[j].y = y_cord+2*sin(y_cord);
+            planetPosition[j].eaten = 0;
+        }
+
+
         x_cord -= 1;
         y_cord+=2;
         if(precnik>=0.5){
@@ -106,7 +111,73 @@ void DrawObjects(void){
         }
     }
 
+    /*Crtamo planete u trecem kvadrantu*/
+    x_cord = -1;
+    y_cord = -1;
+    for (j=40; j<60; j++){
+        if(!indikator){
+            DrawPlanet(precnik, x_cord, y_cord + 3*sin(y_cord));
+        }else{
+            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+        }
+        if(gameStarted && indikator==0){          
+            planetPosition[j].x = x_cord;
+            planetPosition[j].y = y_cord + 3*sin(y_cord);
+            planetPosition[j].eaten = 0;
+        }
+        x_cord -= 2;
+        y_cord -=1;
+        if(precnik>=0.5){
+            precnik = 0.1;
+        }
+        else{
+            precnik+=0.1;
+        }
+    }
+
+    /*Crtamo planete u cetvrtom kvadrantu*/
+    x_cord = 1;
+    y_cord = -1;
+    for (j=60; j<80; j++){
+        if(!indikator){
+            DrawPlanet(precnik, x_cord + cos(x_cord), y_cord);
+        }else{
+            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+        }
+        if(gameStarted && indikator==0){      
+            planetPosition[j].x = x_cord + cos(x_cord);
+            planetPosition[j].y = y_cord;
+            planetPosition[j].eaten = 0;
+            if(j == 79)
+                indikator = 1;
+            qsort(planetPosition, 20, sizeof(polozaj), comparison);
+            qsort(planetPosition+20, 20, sizeof(polozaj), comparison);
+            qsort(planetPosition+40, 20, sizeof(polozaj), comparison);
+            qsort(planetPosition+60, 20, sizeof(polozaj), comparison);
+            /*mozda ce trebati za debagovanje
+            int i;    
+            for(i=0; i<40; i++){
+                printf("%lf %lf\n", planetPosition[i].x, planetPosition[i].y);
+                printf("**********************************************\n");
+            }*/
+
+        }
+        x_cord += 2;
+        y_cord-=1;
+        if(precnik>=0.5){
+            precnik = 0.1;
+        }
+        else{
+            precnik+=0.1;
+        }
+    }
+
 }
+
+
+
+
+
 
 void DrawPlanet(double radius, double x_cord, double y_cord){
     glPushMatrix();
