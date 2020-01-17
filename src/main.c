@@ -27,12 +27,14 @@ void DrawCircle(void);
 extern void DrawObjects(void);
 static void renderStrokeString(int x, int y, int z, void* font, char* string);
 void displayScoore(void);
+void displayPlanets(void);
 
 /*Promenljiva u koju upisujem tekst sa ulaznog prozora*/
 char statingText[50];
 static GLuint name[1];
 /*Promenljiva za ispis trenutnog rezultata koji je igrac osovojio*/
 static char rezultat[50];
+static char rezultat1[50];
 
 
 int main(int argc, char **argv)
@@ -124,11 +126,14 @@ static void on_display(void)
     }
 
     if(gameStarted){
-        makeSceen();
-    
         DrawObjects();
         glTranslatef(x_position, 0, y_position);
-
+        glPushMatrix();
+            glTranslatef(1,0.7,-1);
+            displayScoore();
+            glTranslatef(0,-0.05,0);
+            displayPlanets();
+        glPopMatrix();
         DrawCircle();
     
     }   
@@ -246,21 +251,34 @@ static void renderStrokeString(int x, int y,int z,void* font, char* string){
 }
 
 /*Funkcija za ispis rezulatat tokom igre*/
-
-/*ne radi*/
 void displayScoore(void){
         glPushMatrix();
             
-            int x = -55;
-            int y = 25;
-            int z = 0;
-            glTranslatef(0,0, 0);
-            glScalef(0.05,0.05,5);
+            int x = -13;
+            int y = 30;
+            float z = 0.8;
+            glScalef(0.03,0.03,5);
                 glPushAttrib(GL_LINE_BIT);
-                    glLineWidth(4); 
-                    sprintf(rezultat,"SCOORE: %f", animation_parametar/100);
-                    glColor3f(1,1,1);
+                    glLineWidth(3); 
+                    sprintf(rezultat,"SCOORE: %.2lf ms", animation_parametar*100); 
+                    glColor3f(1,0,0);
                     renderStrokeString(x,y,z,GLUT_STROKE_MONO_ROMAN,rezultat);
+                glPopAttrib();
+        glPopMatrix();
+}
+
+/*Funkcija koja ispisuje koliko je jos planeta ostalo za pojesti*/
+void displayPlanets(void){
+        glPushMatrix();
+            int x = 10;
+            int y = 30;
+            float z = 0.5;
+            glScalef(0.02,0.02,5);
+                glPushAttrib(GL_LINE_BIT);
+                    glLineWidth(3); 
+                    sprintf(rezultat1,"Planets left: %d", planetsLeft); 
+                    glColor3f(0,1,0);
+                    renderStrokeString(x,y,z,GLUT_STROKE_MONO_ROMAN,rezultat1);
                 glPopAttrib();
         glPopMatrix();
 }

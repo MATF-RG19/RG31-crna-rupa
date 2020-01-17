@@ -20,6 +20,7 @@ typedef struct POLOZAJ{
 
 
 extern int indikator;
+extern int planetsLeft;
 
 extern void DrawObjects(void);
 extern void makeSceen(void);

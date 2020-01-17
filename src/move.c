@@ -18,7 +18,7 @@ float animation_parametar = 0;
 float x_sceen, y_sceen;
 int gameStarted = 0;
 int gameActive = 0;
- double eps1  = 0.5;
+double eps1  = 0.5;
 
 
 /*Tajmer funkcija kojom regulisem kretanje rupe.*/
@@ -52,6 +52,7 @@ void on_timer (int value){
                     printf("1\nPlaneta:%lf %lf\n Rupa: %lf %lf\n", planetPosition[i].x, planetPosition[i].y, x_position, y_position);
                     */
                     planetPosition[i].eaten = 1;
+                    planetsLeft--;
                     break;
                 }
             }        
@@ -67,6 +68,7 @@ void on_timer (int value){
                     printf("2\nPlaneta:%lf %lf\n Rupa: %lf %lf\n", planetPosition[i].x, planetPosition[i].y, x_position, y_position);
                     */
                     planetPosition[i].eaten = 1;
+                    planetsLeft--;
                     break;
                 }
             }    
@@ -81,7 +83,9 @@ void on_timer (int value){
                  && planetPosition[i].eaten == 0){
                     /*
                     printf("3\nPlaneta:%lf %lf\n Rupa: %lf %lf\n", planetPosition[i].x, planetPosition[i].y, x_position, y_position);
-                    */planetPosition[i].eaten = 1;
+                    */
+                    planetPosition[i].eaten = 1;
+                    planetsLeft--;
                     break;
                 }
             }    
@@ -98,14 +102,15 @@ void on_timer (int value){
                     printf("4\nPlaneta:%lf %lf\n Rupa: %lf %lf\n", planetPosition[i].x, planetPosition[i].y, x_position, y_position);
                     */
                     planetPosition[i].eaten = 1;
+                    planetsLeft--;
                     break;
                 }
             }    
         }
     }
 
-    x_position +=now.x*0.05;
-    y_position +=now.y*0.05;
+    x_position +=now.x*0.07;
+    y_position +=now.y*0.07;
     animation_parametar+=0.5;
 
 

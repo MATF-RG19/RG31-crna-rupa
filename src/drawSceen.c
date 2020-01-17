@@ -13,6 +13,7 @@ extern float timer_active;
 /*Indikator koji govori da li su svi polzaji planeta vec izracunati prvi put*/
 extern int indikator = 0;
 static double eps = 0.00005;
+extern int planetsLeft = 80;
 
 int comparison (const void * a, const void * b) {
     polozaj *a1 = (polozaj *)a;
@@ -202,10 +203,26 @@ void DrawPlanet(double radius, double x_cord, double y_cord){
         double g = (double)(rand()%(desno-levo+1)+levo)/290;
         double b = (double)(rand()%(desno-levo+1)+levo)/255;
 
+        glEnable(GL_LIGHTING);
 
+        GLfloat light_diffuse[] = { 0.5, 0.5, 0.5, 1 };
+        GLfloat light_diffuse1 [] ={1, 0, 0, 1}; 
+    
+        glEnable(GL_COLOR_MATERIAL);
+
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+        glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse1);
+
+        GLfloat shine =10;
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shine);
+        GLfloat  diffuse_coefs1[] = {1,1,1,1};
+        glEnable(GL_LIGHT1);
         glColor3f(r,g,b);
         glTranslatef(x_cord, 0.5, y_cord);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,diffuse_coefs1);
         glutSolidSphere(radius,40, 40);
+        glDisable(GL_LIGHT1);
+        glDisable(GL_LIGHTING);
     glPopMatrix();
     
 
@@ -263,25 +280,3 @@ void DrawPlanets(int mov){
     glutSwapBuffers();
 }
 */
-void makeSceen(void){
-    GLfloat light_position[] = { 1, 2, 3, 0 };
-    
-    GLfloat light_ambient[] = { 0.5, 0.5, 0.5, 1 };
-    GLfloat light_diffuse[] = { 0.1, 0.1, 0.1, 1 };
-    GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
-    
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_COLOR_MATERIAL);
-    
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    /* Ukljucuje se osvjetljenje i podesavaju parametri svetla. */
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_COLOR_MATERIAL);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-
-}
