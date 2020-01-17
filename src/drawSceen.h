@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 
+
+/*Struktura koja ce cuvati polozaj planete, samo njenu x i y koordinatu.
+Eaten faktor strukture je indikator koji govori d ali je planeta vec usisana u strukturu.
+0 - nije, 1-jeste*/
 typedef struct POLOZAJ{
     double x;
     double y;

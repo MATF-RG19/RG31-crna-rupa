@@ -36,9 +36,7 @@ int comparison (const void * a, const void * b) {
 }
 
 
-
-void DrawPlanets(int mov);
- void on_timer1( int value){  
+void on_timer1( int value){  
         if(value != 0)
             return;
         hour+=6;
@@ -48,6 +46,7 @@ void DrawPlanets(int mov);
         if(timer_active)
             glutTimerFunc(50, on_timer1, 0);
 }
+
 
 void DrawObjects(void){
     int mov = 0;
@@ -64,12 +63,17 @@ void DrawObjects(void){
     srand(time(NULL));
     /*Crtamo planete u prvom kvadrantu*/
     for (j=0; j<20; j++){
+        /*Da bismo se resili bespotrebnog racuna, samo posto se prvi pit iscrtavaju planete racunacemo njihove pozicije 
+        i pamtiti u niz, svali sledeci put ce planete postavljati samo na te pozicije, i tome indikator sluzi*/
         if(!indikator){    
             DrawPlanet(precnik, x_cord + 2*cos(x_cord), y_cord);
         }else{
-            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            if(planetPosition[j].eaten ==0){
+                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            }
         }
-        if(gameStarted && indikator == 0){      
+        if(gameStarted && indikator == 0){
+            /*Planete se prvi put iscrtavaju i pamti se njihova pozicija*/      
             planetPosition[j].x = x_cord + 2*cos(x_cord);
             planetPosition[j].y = y_cord;
             planetPosition[j].eaten = 0;
@@ -77,6 +81,8 @@ void DrawObjects(void){
         
         x_cord += 1;
         y_cord += 2;
+        /*Precik mog kruga je zapravo 0.4, ali zbog teksture izgleda vece zato kazemo da moze da proguta
+        samo planete do 0.5 ptrecnika*/
         if(precnik>=0.5){
             precnik = 0.1;
         }
@@ -92,7 +98,9 @@ void DrawObjects(void){
         if(!indikator){
             DrawPlanet(precnik, x_cord, y_cord + 2*sin(y_cord));
         }else{
-            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            if(planetPosition[j].eaten ==0){
+                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            }
         }
         if(gameStarted && indikator==0){      
             planetPosition[j].x = x_cord;
@@ -118,7 +126,9 @@ void DrawObjects(void){
         if(!indikator){
             DrawPlanet(precnik, x_cord, y_cord + 3*sin(y_cord));
         }else{
-            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            if(planetPosition[j].eaten ==0){
+                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            }
         }
         if(gameStarted && indikator==0){          
             planetPosition[j].x = x_cord;
@@ -142,7 +152,9 @@ void DrawObjects(void){
         if(!indikator){
             DrawPlanet(precnik, x_cord + cos(x_cord), y_cord);
         }else{
-            DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            if(planetPosition[j].eaten ==0){
+                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            }
         }
         if(gameStarted && indikator==0){      
             planetPosition[j].x = x_cord + cos(x_cord);
@@ -178,12 +190,14 @@ void DrawObjects(void){
 
 
 
-
+/*Funkcija z aisctavanje jedne planete*/
 void DrawPlanet(double radius, double x_cord, double y_cord){
     glPushMatrix();
         int levo = 1;
         int desno =255;
         
+        /*randomizovanje boje planete, delimo sa ovim cudnim brojevim jer ako bismo delili sa 256 dobijamo nezeljeno ponasanje
+        tacnije imamo samo crne planete*/
         double r = (double)(rand()%(desno-levo+1)+levo)/280;
         double g = (double)(rand()%(desno-levo+1)+levo)/290;
         double b = (double)(rand()%(desno-levo+1)+levo)/255;
@@ -197,7 +211,9 @@ void DrawPlanet(double radius, double x_cord, double y_cord){
 
 }
 
+/*Ovo je bilo deo programa ali ipak necemo, mozda dodam na kraju*/
 
+/*
 void DrawPlanets(int mov){
     glPushMatrix();
     float sun_rotation;
@@ -244,9 +260,9 @@ void DrawPlanets(int mov){
         glutSolidSphere(0.4, 40, 40);
     glPopMatrix();
 
-    /*glutSwapBuffers();*/
+    glutSwapBuffers();
 }
-
+*/
 void makeSceen(void){
     GLfloat light_position[] = { 1, 2, 3, 0 };
     

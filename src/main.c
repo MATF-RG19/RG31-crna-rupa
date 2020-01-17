@@ -208,7 +208,7 @@ void DrawCircle(void)
         glEnd();
     glPopMatrix();
 
-    /*lepljenje teksture*/
+    /*Lepljenje teksture*/
     if(!init){
         initialize();
         init  = 1;
