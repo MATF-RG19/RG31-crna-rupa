@@ -11,7 +11,7 @@ Cilj igre jeste pojesti sve planete za sto krace vreme. U gornjem desnom uglu na
 
 :arrow_left:A - da bi isli levo
 
-:arrow_down:S - da bi isli nazad(ka sebi)http://www.matf.bg.ac.rs/p/rastko-djordjevic/cas/2805/cas-7/
+:arrow_down:S - da bi isli nazad(ka sebi)
 
 :arrow_right:D - da bi isli desno
 
