@@ -15,6 +15,7 @@ Eaten faktor strukture je indikator koji govori d ali je planeta vec usisana u s
 typedef struct POLOZAJ{
     double x;
     double y;
+    double precnik;
     int eaten;
 }polozaj;
 

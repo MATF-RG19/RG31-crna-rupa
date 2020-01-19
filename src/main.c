@@ -13,13 +13,15 @@
 #define num_of_dots 600
 #define FILENAME0 "hole113.bmp"
 
+/*Promenljiva koja mi pomaze za teksturu, tacnije pomaze da samo jednom inicializujem teksturu, jer bi se inace to desavalo
+svaki put kad iscrtavam krug*/
 static int init =0;
 float hour;
 float timer_active;
 
 
 static int window_width, window_height;
-
+/*Inicializuje teksturu*/
 static void initialize(void);
 static void on_reshape(int width, int height);
 static void on_display(void);
@@ -34,6 +36,7 @@ char statingText[50];
 static GLuint name[1];
 /*Promenljiva za ispis trenutnog rezultata koji je igrac osovojio*/
 static char rezultat[50];
+/*Prikazuje koliko je planeta ostalo*/
 static char rezultat1[50];
 
 
@@ -41,8 +44,6 @@ int main(int argc, char **argv)
 {
     x_position = 0;
     y_position = 0;
-    x_sceen = 0;
-    y_sceen = 0;
     now.x = 0;
     now.y = 0;
     hour = 0;
@@ -64,10 +65,7 @@ int main(int argc, char **argv)
     glClearColor(0, 0, 0, 0);
     glEnable(GL_DEPTH_TEST);
     glLineWidth(2);
-    /*initialize();*/
-
     
-
     glutMainLoop();
 
     return 0;
@@ -101,7 +99,7 @@ static void on_display(void)
             1, 1, 1,
             0, 1, 0
         );
-    }
+    }/*Menjam poziciju kamere jer inace nisam mogla lepo da podesim ulazni prozor*/
     else{
         gluLookAt(
                 1+x_position, 2, 3+y_position,
@@ -128,12 +126,15 @@ static void on_display(void)
     if(gameStarted){
         DrawObjects();
         glTranslatef(x_position, 0, y_position);
+        /*Postavljanje testa*/
         glPushMatrix();
             glTranslatef(1,0.7,-1);
             displayScoore();
-            glTranslatef(0,-0.05,0);
+            glTranslatef(0,-0.0005,0);
             displayPlanets();
         glPopMatrix();
+        /*Uvecavamo crnu rupu nakon bsvakog usiavanja.*/
+        glScalef(1+(80-planetsLeft)*0.01, 1+(80-planetsLeft)*0.01, 1+(80 -planetsLeft)*0.01);
         DrawCircle();
     
     }   
@@ -253,14 +254,13 @@ static void renderStrokeString(int x, int y,int z,void* font, char* string){
 /*Funkcija za ispis rezulatat tokom igre*/
 void displayScoore(void){
         glPushMatrix();
-            
-            int x = -13;
+            int x = 10;
             int y = 30;
             float z = 0.8;
             glScalef(0.03,0.03,5);
                 glPushAttrib(GL_LINE_BIT);
                     glLineWidth(3); 
-                    sprintf(rezultat,"SCOORE: %.2lf ms", animation_parametar*100); 
+                    sprintf(rezultat,"SCOORE: %.0lf ", animation_parametar); 
                     glColor3f(1,0,0);
                     renderStrokeString(x,y,z,GLUT_STROKE_MONO_ROMAN,rezultat);
                 glPopAttrib();
@@ -270,7 +270,7 @@ void displayScoore(void){
 /*Funkcija koja ispisuje koliko je jos planeta ostalo za pojesti*/
 void displayPlanets(void){
         glPushMatrix();
-            int x = 10;
+            int x = 13;
             int y = 30;
             float z = 0.5;
             glScalef(0.02,0.02,5);

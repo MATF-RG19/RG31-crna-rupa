@@ -11,9 +11,10 @@
 extern float hour;
 extern float timer_active;
 /*Indikator koji govori da li su svi polzaji planeta vec izracunati prvi put*/
-extern int indikator = 0;
+int indikator = 0;
 static double eps = 0.00005;
-extern int planetsLeft = 80;
+int planetsLeft = 80;
+void placeThePlanets(double x_cord, double y_cord, double precnik, int i, int x_kvadrant, int y_kvadrant, int s, int po_x);
 
 int comparison (const void * a, const void * b) {
     polozaj *a1 = (polozaj *)a;
@@ -47,122 +48,44 @@ void on_timer1( int value){
         if(timer_active)
             glutTimerFunc(50, on_timer1, 0);
 }
-
-
-void DrawObjects(void){
-    int mov = 0;
-    /*int i;
-    for(i=1; i<2; i++){
-        DrawPlanets(mov);
-        mov+=0.8;
-    }*/
-    double precnik = 0.1;
-    
-    double x_cord = 1;
-    double y_cord = 1;
+/*Funkcija koja iscrtava sve planete po kvadrantima.x_kvadrant je promenljiva koja regulise promenu parametara x pri iscrtavanju,
+slicno za y_kvadrant. 
+Parametar s govori d ali cemo randomizovati sa sinusom ili sa kosinusom.*/
+void placeThePlanets(double x_cord, double y_cord, double precnik, int i, int x_kvadrant, int y_kvadrant, int s, int po_x){
     int j;
-    srand(time(NULL));
-    /*Crtamo planete u prvom kvadrantu*/
-    for (j=0; j<20; j++){
-        /*Da bismo se resili bespotrebnog racuna, samo posto se prvi pit iscrtavaju planete racunacemo njihove pozicije 
+    int uz_x = po_x;
+    int uz_y;
+    if(po_x ==0)
+        uz_y = 1;
+    else
+        uz_y = 0;
+    for (j=i; j<i+20; j++){
+        /*Da bismo se resili bespotrebnog racuna, samo kada se prvi put iscrtavaju planete racunacemo njihove pozicije 
         i pamtiti u niz, svali sledeci put ce planete postavljati samo na te pozicije, i tome indikator sluzi*/
-        if(!indikator){    
-            DrawPlanet(precnik, x_cord + 2*cos(x_cord), y_cord);
-        }else{
-            if(planetPosition[j].eaten ==0){
-                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
-            }
-        }
-        if(gameStarted && indikator == 0){
-            /*Planete se prvi put iscrtavaju i pamti se njihova pozicija*/      
-            planetPosition[j].x = x_cord + 2*cos(x_cord);
-            planetPosition[j].y = y_cord;
-            planetPosition[j].eaten = 0;
-        }
-        
-        x_cord += 1;
-        y_cord += 2;
-        /*Precik mog kruga je zapravo 0.4, ali zbog teksture izgleda vece zato kazemo da moze da proguta
-        samo planete do 0.5 ptrecnika*/
-        if(precnik>=0.5){
-            precnik = 0.1;
-        }
-        else{
-            precnik+=0.1;
-        }
-    }
-
-    /*Crtamo planete u drugom kvadrantu*/
-    x_cord = -1;
-    y_cord = 1;
-    for (j=20; j<40; j++){
         if(!indikator){
-            DrawPlanet(precnik, x_cord, y_cord + 2*sin(y_cord));
+            if(s ==0){    
+                DrawPlanet(precnik, x_cord + 2*cos(x_cord)*uz_x, y_cord + 3*cos(y_cord)*uz_y);
+                planetPosition[j].x = x_cord + 2*cos(x_cord)*uz_x;
+                planetPosition[j].y = y_cord + 2*cos(y_cord)*uz_y;
+                planetPosition[j].eaten = 0;
+                planetPosition[j].precnik = precnik;
+            }
+            else{
+                DrawPlanet(precnik, x_cord + sin(x_cord)*uz_x, y_cord + 3* sin(y_cord)*uz_y);
+                planetPosition[j].x = x_cord + 2*sin(x_cord)*uz_x;
+                planetPosition[j].y = y_cord + 3*sin(y_cord)*uz_y;
+                planetPosition[j].eaten = 0;
+                planetPosition[j].precnik = precnik;
+            }
         }else{
-            if(planetPosition[j].eaten ==0){
-                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
+            /*Provera da li je planeta vec pojedena*/
+            if(planetPosition[j].eaten == 0){
+                DrawPlanet(planetPosition[j].precnik, planetPosition[j].x, planetPosition[j].y);
             }
         }
-        if(gameStarted && indikator==0){      
-            planetPosition[j].x = x_cord;
-            planetPosition[j].y = y_cord+2*sin(y_cord);
-            planetPosition[j].eaten = 0;
-        }
-
-
-        x_cord -= 1;
-        y_cord+=2;
-        if(precnik>=0.5){
-            precnik = 0.1;
-        }
-        else{
-            precnik+=0.1;
-        }
-    }
-
-    /*Crtamo planete u trecem kvadrantu*/
-    x_cord = -1;
-    y_cord = -1;
-    for (j=40; j<60; j++){
-        if(!indikator){
-            DrawPlanet(precnik, x_cord, y_cord + 3*sin(y_cord));
-        }else{
-            if(planetPosition[j].eaten ==0){
-                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
-            }
-        }
-        if(gameStarted && indikator==0){          
-            planetPosition[j].x = x_cord;
-            planetPosition[j].y = y_cord + 3*sin(y_cord);
-            planetPosition[j].eaten = 0;
-        }
-        x_cord -= 2;
-        y_cord -=1;
-        if(precnik>=0.5){
-            precnik = 0.1;
-        }
-        else{
-            precnik+=0.1;
-        }
-    }
-
-    /*Crtamo planete u cetvrtom kvadrantu*/
-    x_cord = 1;
-    y_cord = -1;
-    for (j=60; j<80; j++){
-        if(!indikator){
-            DrawPlanet(precnik, x_cord + cos(x_cord), y_cord);
-        }else{
-            if(planetPosition[j].eaten ==0){
-                DrawPlanet(precnik, planetPosition[j].x, planetPosition[j].y);
-            }
-        }
-        if(gameStarted && indikator==0){      
-            planetPosition[j].x = x_cord + cos(x_cord);
-            planetPosition[j].y = y_cord;
-            planetPosition[j].eaten = 0;
-            if(j == 79)
-                indikator = 1;
+    
+        if(j == 79 && indikator ==0 ){
+            indikator = 1;
             qsort(planetPosition, 20, sizeof(polozaj), comparison);
             qsort(planetPosition+20, 20, sizeof(polozaj), comparison);
             qsort(planetPosition+40, 20, sizeof(polozaj), comparison);
@@ -173,17 +96,55 @@ void DrawObjects(void){
                 printf("%lf %lf\n", planetPosition[i].x, planetPosition[i].y);
                 printf("**********************************************\n");
             }*/
-
         }
-        x_cord += 2;
-        y_cord-=1;
+
+        
+        x_cord  = x_cord + (x_kvadrant)*1;
+        y_cord =  y_cord + (y_kvadrant)*2;
+        /*Precik mog kruga je zapravo 0.4, ali zbog teksture izgleda vece zato kazemo da moze da proguta
+        samo planete do 0.5 ptrecnika*/
         if(precnik>=0.5){
             precnik = 0.1;
         }
-        else{
+         else{
             precnik+=0.1;
+        
         }
     }
+
+}
+
+
+void DrawObjects(void){
+    double precnik = 0.1;
+    srand(time(NULL));
+    double x_cord;
+    double y_cord;
+
+    /*Crtamo planete u prvom kvadrantu*/
+    if(!indikator){
+        x_cord = 1;
+        y_cord = 1;
+    }
+    placeThePlanets(x_cord, y_cord,precnik, 0, 1, 1, 0, 1);
+    /*Crtamo planete u drugom kvadrantu*/
+    if(!indikator){
+        x_cord = -1;
+        y_cord = 1;
+    }
+    placeThePlanets(x_cord, y_cord, precnik, 20, -1, 1, 1, 0);
+    /*Crtamo planete u trecem kvadrantu*/
+    if(!indikator){
+        x_cord = -1;
+        y_cord = -1;
+    }
+    placeThePlanets(x_cord, y_cord, precnik, 40, -1, -1, 1, 0);
+    /*Crtamo planete u cetvrtom kvadrantu*/
+    if(!indikator){
+        x_cord = 1;
+        y_cord = -1;
+    }
+    placeThePlanets(x_cord, y_cord, precnik, 60, 1, -1, 0, 1);
 
 }
 
@@ -191,7 +152,7 @@ void DrawObjects(void){
 
 
 
-/*Funkcija z aisctavanje jedne planete*/
+/*Funkcija za isctavanje jedne planete*/
 void DrawPlanet(double radius, double x_cord, double y_cord){
     glPushMatrix();
         int levo = 1;
@@ -228,55 +189,3 @@ void DrawPlanet(double radius, double x_cord, double y_cord){
 
 }
 
-/*Ovo je bilo deo programa ali ipak necemo, mozda dodam na kraju*/
-
-/*
-void DrawPlanets(int mov){
-    glPushMatrix();
-    float sun_rotation;
-    float earth_rotation, earth_revolution;
-    float moon_rotation, moon_revolution;
-
-    sun_rotation = 360 * hour / (15 * 24);
-    glTranslatef(-0.1,0.5,0.1);
-    glPushMatrix();
-        glRotatef(sun_rotation, 0, 1, 0);
-        glColor3f(1, 1, 0);
-        glutSolidSphere(0.35, 40, 40);
-    glPopMatrix();
-    
-    earth_revolution = 360 * hour / (365 * 24);
-    earth_rotation = 360 * hour / (1 * 24);
-
-    glRotatef(earth_revolution, 0, 1, 0);
-    glTranslatef(2,0.5,0.1);
-    glPushMatrix();
-        glRotatef(earth_rotation, 0, 1, 0);
-        glColor3f(0, 0, 1);
-        glutSolidSphere(0.3, 40, 40);
-    glPopMatrix();
-    
-    moon_revolution = 360 * hour / (28 * 24);
-    moon_rotation = 360 * hour / (28 * 24);
-
-    glRotatef(moon_revolution, 0, 1, 0);
-    glTranslatef(0.5,0 ,0.1);
-
-    glRotatef(moon_rotation, 0, 1, 0);
-    glColor3f(1, 1, 1);
-    glutSolidSphere(0.1, 40, 40);
-
-    glPopMatrix();
-    
-    glPushMatrix();
-        glTranslatef(2, 0.5, 2);
-        glColor3f(1, 0, 0);
-        glutSolidSphere(0.5, 40, 40);
-        glTranslatef(1, -0.1, -3);
-        glColor3f(0, 1, 0);
-        glutSolidSphere(0.4, 40, 40);
-    glPopMatrix();
-
-    glutSwapBuffers();
-}
-*/
