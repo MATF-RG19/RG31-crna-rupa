@@ -17,7 +17,7 @@ Cilj igre jeste pojesti sve planete za sto krace vreme. U gornjem desnom uglu na
 
 :arrow_right:D or d- da bi isli desno
 
-:bell: H or g- za pomoc u navigaciji
+:bell: H or h- za pomoc u navigaciji
 
 :heavy_multiplication_x:ESC-za izlaz programa
 
