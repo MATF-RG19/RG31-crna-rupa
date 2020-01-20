@@ -31,7 +31,7 @@ void EatPlanet(int j){
         */
         if(((-1)*eps1<x_position-planetPosition[i].x && x_position-planetPosition[i].x<eps1) 
         && (-1)*eps1<y_position-planetPosition[i].y && y_position-planetPosition[i].y<eps1 
-        && planetPosition[i].eaten == 0 && planetPosition[j].precnik <= 0.4*(1+(80 - planetsLeft)*0.01)){
+        && planetPosition[i].eaten == 0){
             /*Mozad ce trebati za debagovanje
             printf("1\nPlaneta:%lf %lf\n Rupa: %lf %lf\n", planetPosition[i].x, planetPosition[i].y, x_position, y_position);
             */
@@ -78,6 +78,9 @@ void on_timer (int value){
     x_position +=now.x*0.07;
     y_position +=now.y*0.07;
     animation_parametar+=0.5;
+    if(planetsLeft ==0){
+        gameOver = 1;
+    }
 
 
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
@@ -93,7 +96,7 @@ void onKeyboard(unsigned char key,int x,int y){
         case 27:
             exit(0);
             break;
-
+        case 'S':
         case 's':
         /*Da bi detektovali pritisak pritisak tastera prvi put*/
         if(!gameActive){
@@ -106,7 +109,7 @@ void onKeyboard(unsigned char key,int x,int y){
         }
             now.y+=1;
             break;
-
+        case 'W':
         case 'w':
             if(!gameActive){
                 gameActive = 1;
@@ -119,6 +122,7 @@ void onKeyboard(unsigned char key,int x,int y){
             now.y-=1;
             break;
 
+        case 'A':
         case 'a':
             if(!gameActive){
                 gameActive = 1;
@@ -133,6 +137,7 @@ void onKeyboard(unsigned char key,int x,int y){
             now.x-=1;
             break;
 
+        case 'D':
         case 'd':
             if(!gameActive){
                 gameActive = 1;
@@ -146,6 +151,23 @@ void onKeyboard(unsigned char key,int x,int y){
                 break;
             now.x+=1;
             break;
+        case 'B':    
+        case 'b':
+            if(gameActive){
+                planetsLeft = 0;
+            }
+            break;
+        
+        case 'H':
+        case 'h':
+            if(gameActive && !needHelp){
+                needHelp = 1;
+            }
+            else if(gameActive && needHelp){
+                needHelp = 0;
+            }
+            break;
+
     }
 
    glutPostRedisplay();

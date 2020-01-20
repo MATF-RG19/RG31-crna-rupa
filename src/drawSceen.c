@@ -92,7 +92,7 @@ void placeThePlanets(double x_cord, double y_cord, double precnik, int i, int x_
             qsort(planetPosition+60, 20, sizeof(polozaj), comparison);
             /*mozda ce trebati za debagovanje
             int i;    
-            for(i=0; i<40; i++){
+            for(i=0; i<80; i++){
                 printf("%lf %lf\n", planetPosition[i].x, planetPosition[i].y);
                 printf("**********************************************\n");
             }*/

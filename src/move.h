@@ -16,6 +16,8 @@ typedef struct MOVE{
 
 int gameStarted;
 int gameActive;
+extern int gameOver;
+extern int needHelp;
 
 
 move now;
