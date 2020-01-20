@@ -9,15 +9,18 @@ Cilj igre jeste pojesti sve planete za sto krace vreme. U gornjem desnom uglu na
 
 :heavy_exclamation_mark: NAPOMENA: Rupa se krece u xOz ravni.
 
-:arrow_left:A - da bi isli levo
+:arrow_up:W or w - da bi isli napred(od sebe)
 
-:arrow_down:S - da bi isli nazad(ka sebi)
+:arrow_left:A or a- da bi isli levo
 
-:arrow_right:D - da bi isli desno
+:arrow_down:S or s- da bi isli nazad(ka sebi)
 
-:arrow_up:W - da bi isli napred(od sebe)
+:arrow_right:D or d- da bi isli desno
+
+:bell: H or g- za pomoc u navigaciji
 
 :heavy_multiplication_x:ESC-za izlaz programa
+
 
  ## :bangbang: Napomena:
  
